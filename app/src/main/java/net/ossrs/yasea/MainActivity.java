@@ -169,6 +169,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
 
+        Log.e("MainActivity1", String.valueOf(mCamId));//   1
         // response screen rotation event
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
 
@@ -205,6 +206,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
                         e.printStackTrace();
                         return;
                     }
+
+                    //设置分辨率
                     flvMuxer.setVideoResolution(mEncoder.VOUT_WIDTH, mEncoder.VOUT_HEIGHT);
 
                     startEncoder();
@@ -231,7 +234,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
             @Override
             public void onClick(View v) {
                 if (mCamera != null && mEncoder != null) {
+                    Log.e("MainActivity2", String.valueOf(mCamId));//  1
                     mCamId = (mCamId + 1) % Camera.getNumberOfCameras();
+                    Log.e("MainActivity3", String.valueOf(mCamId));//  0
                     stopCamera();
                     mEncoder.swithCameraFace();
                     startCamera();
@@ -322,12 +327,15 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
             Log.d(TAG, "start camera, already started. return");
             return;
         }
+        Log.e("MainActivity", String.valueOf(mCamId));//  1
         if (mCamId > (Camera.getNumberOfCameras() - 1) || mCamId < 0) {
             Log.e(TAG, "####### start camera failed, inviald params, camera No.=" + mCamId);
+            Log.e("MainActivity5", String.valueOf(mCamId));//  0
             return;
         }
 
         mCamera = Camera.open(mCamId);
+        Log.e("MainActivity6", String.valueOf(mCamId));//   0
         Camera.Parameters params = mCamera.getParameters();
 
         List<Size> pictureSizes = params.getSupportedPictureSizes();
@@ -344,11 +352,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         /* preview size  */
         Size size = mCamera.new Size(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
         if (!params.getSupportedPreviewSizes().contains(size)) {
-//            int width = size.width;
-//            int height = size.height;
-//            Log.e("分辨率width", String.valueOf(width));
-//            Log.e("分辨率height", String.valueOf(height));
-
             Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
                     new IllegalArgumentException(String.format("Unsupported preview size %dx%d", size.width, size.height)));
         }
