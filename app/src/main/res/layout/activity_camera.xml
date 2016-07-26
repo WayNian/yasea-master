@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="直播页面"
+            android:text="停止"
             android:textSize="35sp" />
 
 

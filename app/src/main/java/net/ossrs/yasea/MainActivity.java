@@ -52,7 +52,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
 
     private String mNotifyMsg;
     private SharedPreferences sp;
-    private String rtmpUrl = "rtmp://ossrs.net/" + getRandomAlphaString(3) + '/' + getRandomAlphaDigitString(5);
+    private String rtmpUrl = "rtmp://115.159.206.57/live/tt";
     private String recPath = Environment.getExternalStorageDirectory().getPath() + "/test.mp4";
 
     private SrsFlvMuxer flvMuxer = new SrsFlvMuxer(new RtmpPublisher.EventHandler() {
@@ -334,40 +334,44 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
             return;
         }
 
-        mCamera = Camera.open(mCamId);
+        try {
+            mCamera = Camera.open();
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
         Log.e("MainActivity6", String.valueOf(mCamId));//   0
         Camera.Parameters params = mCamera.getParameters();
 
         List<Size> pictureSizes = params.getSupportedPictureSizes();
         int length = pictureSizes.size();
         for (int i = 0; i < length; i++) {
-            Log.e("SupportedPictureSizes","SupportedPictureSizes : " + pictureSizes.get(i).width + "x" + pictureSizes.get(i).height);
+            Log.e("SupportedPictureSizes", "SupportedPictureSizes : " + pictureSizes.get(i).width + "x" + pictureSizes.get(i).height);
         }
 
         List<Size> previewSizes = params.getSupportedPreviewSizes();
         length = previewSizes.size();
         for (int i = 0; i < length; i++) {
-            Log.e("SupportedPreviewSizes","SupportedPreviewSizes : " + previewSizes.get(i).width + "x" + previewSizes.get(i).height);
+            Log.e("SupportedPreviewSizes", "SupportedPreviewSizes : " + previewSizes.get(i).width + "x" + previewSizes.get(i).height);
         }
-        /* preview size  */
-        Size size = mCamera.new Size(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
-        if (!params.getSupportedPreviewSizes().contains(size)) {
-            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
-                    new IllegalArgumentException(String.format("Unsupported preview size %dx%d", size.width, size.height)));
-        }
-
-        /* picture size  */
-        if (!params.getSupportedPictureSizes().contains(size)) {
-            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
-                    new IllegalArgumentException(String.format("Unsupported picture size %dx%d", size.width, size.height)));
-        }
+//        /* preview size  */
+//        Size size = mCamera.new Size(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
+//        if (!params.getSupportedPreviewSizes().contains(size)) {
+//            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
+//                    new IllegalArgumentException(String.format("Unsupported preview size %dx%d", size.width, size.height)));
+//        }
+//
+//        /* picture size  */
+//        if (!params.getSupportedPictureSizes().contains(size)) {
+//            Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(),
+//                    new IllegalArgumentException(String.format("Unsupported picture size %dx%d", size.width, size.height)));
+//        }
 
         /***** set parameters *****/
         //params.set("orientation", "portrait");
         //params.set("orientation", "landscape");
         //params.setRotation(90);
         params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
-        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
+        params.setPreviewSize(640, 480);
         int[] range = findClosestFpsRange(SrsEncoder.VFPS, params.getSupportedPreviewFpsRange());
         params.setPreviewFpsRange(range[0], range[1]);
         params.setPreviewFormat(SrsEncoder.VFORMAT);
@@ -379,7 +383,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         }
         mCamera.setParameters(params);
 
-        mCamera.setDisplayOrientation(mPreviewRotation);
+//        mCamera.setDisplayOrientation(mPreviewRotation);
 
         mCamera.addCallbackBuffer(mYuvFrameBuffer);
         mCamera.setPreviewCallbackWithBuffer(this);

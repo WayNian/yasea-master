@@ -20,8 +20,8 @@ public class SrsEncoder {
 
     public static final String VCODEC = "video/avc";
     public static final String ACODEC = "audio/mp4a-latm";
-    public static final int VPREV_WIDTH = 1280;
-    public static final int VPREV_HEIGHT = 720;
+    public static final int VPREV_WIDTH = 640;
+    public static final int VPREV_HEIGHT = 480;
     public static final int VOUT_WIDTH = 384;
     public static final int VOUT_HEIGHT = 640;
     public static int vOutWidth = VOUT_WIDTH;   // Note: the stride of resolution must be set as 16x for hard encoding with some chip like MTK
