@@ -2,7 +2,6 @@ package net.ossrs.yasea;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
@@ -25,11 +24,12 @@ public class CameraActivity extends Activity {
     // UI相关
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
-    private Button okButton, btn_living;
-    private Spinner channelSpinner;
+    private Button okButton;
+    private Spinner  channelSpinner;
 
     private int height = 290;// 制式通道的改变
     private int width = 0;
+    private int mNumberOfCameras;
 
     private Camera camera = null;
     private Parameters param = null;
@@ -102,6 +102,7 @@ public class CameraActivity extends Activity {
         }
     }
 
+
     private void view_init() {
         // TODO Auto-generated method stub
         System.out.println("------view_init------");
@@ -109,9 +110,6 @@ public class CameraActivity extends Activity {
         channelSpinner = (Spinner) findViewById(R.id.channel_spinner);
         okButton = (Button) findViewById(R.id.ok_button);
         okButton.setOnClickListener(new buttonClick());
-
-        btn_living = (Button) findViewById(R.id.btn_living);
-        btn_living.setOnClickListener(new buttonClick());
 
         SpinnerAdapter channelAdapter = new SpinnerAdapter(CameraActivity.this,
                 android.R.layout.simple_spinner_item, channelList);
@@ -129,11 +127,6 @@ public class CameraActivity extends Activity {
                 case R.id.ok_button:
                     ok_choice();
                     break;
-                case R.id.btn_living:
-                    Intent intent = new Intent(CameraActivity.this,MainActivity.class);
-                    startActivity(intent);
-                    break;
-
                 default:
                     break;
             }
@@ -163,6 +156,9 @@ public class CameraActivity extends Activity {
         CloseCamera();
 
         InitCamera();
+
+        mNumberOfCameras = Camera.getNumberOfCameras();
+        Log.e("摄像头", String.valueOf(mNumberOfCameras));
     }
 
     // 初始化camera
@@ -177,13 +173,13 @@ public class CameraActivity extends Activity {
             List<Camera.Size> pictureSizes = param.getSupportedPictureSizes();
             int length = pictureSizes.size();
             for (int i = 0; i < length; i++) {
-                Log.e("SupportedPictureSizes", "SupportedPictureSizes : " + pictureSizes.get(i).width + "x" + pictureSizes.get(i).height);
+                Log.e("SupportedPictureSizes","SupportedPictureSizes : " + pictureSizes.get(i).width + "x" + pictureSizes.get(i).height);
             }
 
             List<Camera.Size> previewSizes = param.getSupportedPreviewSizes();
             length = previewSizes.size();
             for (int i = 0; i < length; i++) {
-                Log.e("SupportedPreviewSizes", "SupportedPreviewSizes : " + previewSizes.get(i).width + "x" + previewSizes.get(i).height);
+                Log.e("SupportedPreviewSizes","SupportedPreviewSizes : " + previewSizes.get(i).width + "x" + previewSizes.get(i).height);
             }
 
 
@@ -222,7 +218,8 @@ public class CameraActivity extends Activity {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         // TODO Auto-generated method stub
         super.onDestroy();
         System.out.println("------onDestroy------");

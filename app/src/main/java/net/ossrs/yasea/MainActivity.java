@@ -371,7 +371,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         //params.set("orientation", "landscape");
         //params.setRotation(90);
         params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
-        params.setPreviewSize(640, 480);
+        params.setPreviewSize(500, 290);
         int[] range = findClosestFpsRange(SrsEncoder.VFPS, params.getSupportedPreviewFpsRange());
         params.setPreviewFpsRange(range[0], range[1]);
         params.setPreviewFormat(SrsEncoder.VFORMAT);
