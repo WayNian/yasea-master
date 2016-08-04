@@ -63,6 +63,7 @@ static bool nv21_to_i420(jbyte *nv21_frame, jint src_width, jint src_height,
             i420_rotated_frame.u = i420_rotated_frame.y + y_size;
             i420_rotated_frame.v = i420_rotated_frame.u + y_size / 4;
         }
+
     } else {
         if (i420_rotated_frame.width != src_height || i420_rotated_frame.height != src_width) {
             free(i420_rotated_frame.data);
@@ -83,6 +84,8 @@ static bool nv21_to_i420(jbyte *nv21_frame, jint src_width, jint src_height,
                              src_width, src_height,
                              src_width, src_height,
                              (RotationMode) rotate_degree, FOURCC_NV21);
+
+
     if (ret < 0) {
         LIBENC_LOGE("ConvertToI420 failure");
         return false;

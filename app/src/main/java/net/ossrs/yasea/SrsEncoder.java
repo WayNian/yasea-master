@@ -29,7 +29,7 @@ public class SrsEncoder {
     public static final int VBITRATE = 500 * 1000;  // 500kbps
     public static final int VFPS = 24;
     public static final int VGOP = 48;
-    public static final int VFORMAT = ImageFormat.NV21;
+//    public static final int VFORMAT = ImageFormat.NV21;
     public static final int ASAMPLERATE = 44100;
     public static final int ACHANNEL = AudioFormat.CHANNEL_IN_STEREO;
     public static final int AFORMAT = AudioFormat.ENCODING_PCM_16BIT;
@@ -74,6 +74,7 @@ public class SrsEncoder {
         this.mp4Muxer = mp4Muxer;
 
         mVideoColorFormat = chooseVideoEncoder();
+        Log.e(TAG, "mVideoColorFormat"+String.valueOf(mVideoColorFormat));
     }
 
     public boolean start() {
@@ -178,6 +179,7 @@ public class SrsEncoder {
         } else {
             mCameraFaceFront = true;
         }
+        Log.e(TAG, "mCameraFaceFront"+String.valueOf(mCameraFaceFront));
     }
 
     public void swithToSoftEncoder() {

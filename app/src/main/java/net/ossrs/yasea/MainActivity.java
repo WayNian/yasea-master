@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +58,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
     private String rtmpUrl = "rtmp://115.159.206.57/live/tt";
     private String recPath = Environment.getExternalStorageDirectory().getPath() + "/test.mp4";
 
+    //创建一个SrsFlvMuxer对象
     private SrsFlvMuxer flvMuxer = new SrsFlvMuxer(new RtmpPublisher.EventHandler() {
         @Override
         public void onRtmpConnecting(String msg) {
@@ -189,6 +193,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         mCameraView = (SurfaceView) findViewById(R.id.preview);
         mCameraView.getHolder().addCallback(this);
 
+        //点击按钮开始推流
         btnPublish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,6 +235,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
             }
         });
 
+        //切换摄像机
         btnSwitchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,6 +250,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
             }
         });
 
+        //点击按钮录像
         btnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -265,6 +272,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
             }
         });
 
+        //点击切换解码方式
         btnSwitchEncoder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -342,6 +350,18 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         Log.e("MainActivity6", String.valueOf(mCamId));//   0
         Camera.Parameters params = mCamera.getParameters();
 
+        //手机支持的预览格式
+        List<Integer> supPreFmtList = params.getSupportedPreviewFormats();
+        Log.e("SupportedPreviewFormats", "Supported Preview Format :");
+
+        for(int num = 0; num < supPreFmtList.size(); num++)
+        {
+            Integer ISupPreFmt = supPreFmtList.get(num);
+            Log.e("SupportedPreviewFormats", "" + ISupPreFmt.intValue());
+
+        }
+
+
         List<Size> pictureSizes = params.getSupportedPictureSizes();
         int length = pictureSizes.size();
         for (int i = 0; i < length; i++) {
@@ -353,6 +373,13 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         for (int i = 0; i < length; i++) {
             Log.e("SupportedPreviewSizes", "SupportedPreviewSizes : " + previewSizes.get(i).width + "x" + previewSizes.get(i).height);
         }
+
+        List<Integer> SupportedpreviewSizes = params.getSupportedPreviewFormats();
+        length = SupportedpreviewSizes.size();
+        for (int i = 0; i < length; i++) {
+            Log.e("SupportedpreviewSizes", "SupportedpreviewSizes : " + SupportedpreviewSizes.get(i)+ "x");
+        }
+
 //        /* preview size  */
 //        Size size = mCamera.new Size(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
 //        if (!params.getSupportedPreviewSizes().contains(size)) {
@@ -369,12 +396,14 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         /***** set parameters *****/
         //params.set("orientation", "portrait");
         //params.set("orientation", "landscape");
-        //params.setRotation(90);
+//        params.setRotation(90);
         params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
-        params.setPreviewSize(500, 290);
+//        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
+        //500,290对应的是摄像头一，501是摄像头二
+        params.setPreviewSize(640, 480);
         int[] range = findClosestFpsRange(SrsEncoder.VFPS, params.getSupportedPreviewFpsRange());
         params.setPreviewFpsRange(range[0], range[1]);
-        params.setPreviewFormat(SrsEncoder.VFORMAT);
+//        params.setPreviewFormat(SrsEncoder.VFORMAT);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
         params.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
@@ -554,6 +583,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
     @Override
     public void surfaceDestroyed(SurfaceHolder arg0) {
         Log.d(TAG, "surfaceDestroyed");
+       mCameraView = null;
     }
 
     @Override
