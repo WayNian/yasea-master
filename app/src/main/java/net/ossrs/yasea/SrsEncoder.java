@@ -29,7 +29,7 @@ public class SrsEncoder {
     public static final int VBITRATE = 500 * 1000;  // 500kbps
     public static final int VFPS = 24;
     public static final int VGOP = 48;
-//    public static final int VFORMAT = ImageFormat.NV21;
+    public static final int VFORMAT = ImageFormat.NV21;
     public static final int ASAMPLERATE = 44100;
     public static final int ACHANNEL = AudioFormat.CHANNEL_IN_STEREO;
     public static final int AFORMAT = AudioFormat.ENCODING_PCM_16BIT;

@@ -398,12 +398,12 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         //params.set("orientation", "landscape");
 //        params.setRotation(90);
         params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
-//        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
+        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
         //500,290对应的是摄像头一，501是摄像头二
-        params.setPreviewSize(640, 480);
+//        params.setPreviewSize(640, 480);
         int[] range = findClosestFpsRange(SrsEncoder.VFPS, params.getSupportedPreviewFpsRange());
         params.setPreviewFpsRange(range[0], range[1]);
-//        params.setPreviewFormat(SrsEncoder.VFORMAT);
+        params.setPreviewFormat(SrsEncoder.VFORMAT);
         params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
         params.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
