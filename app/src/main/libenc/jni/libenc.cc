@@ -10,6 +10,9 @@
 
 #define LIBENC_ARRAY_ELEMS(a)  (sizeof(a) / sizeof(a[0]))
 
+#define time1_5	(3/2)
+#define devide4	(4)
+
 using namespace libyuv;
 
 struct YuvFrame {
@@ -51,49 +54,46 @@ static struct YuvFrame nv12_frame;
 
 static bool nv21_to_i420(jbyte *nv21_frame, jint src_width, jint src_height,
                          jboolean need_flip, jint rotate_degree) {
-    int y_size = src_width * src_height;
+    int y_size = src_width * src_height;		//y size
 
     if (rotate_degree % 180 == 0) {
         if (i420_rotated_frame.width != src_width || i420_rotated_frame.height != src_height) {
             free(i420_rotated_frame.data);
             i420_rotated_frame.width = src_width;
             i420_rotated_frame.height = src_height;
-            i420_rotated_frame.data = (uint8_t *) malloc(y_size * 3 / 2);
+            i420_rotated_frame.data = (uint8_t *) malloc(y_size * time1_5);
             i420_rotated_frame.y = i420_rotated_frame.data;
             i420_rotated_frame.u = i420_rotated_frame.y + y_size;
-            i420_rotated_frame.v = i420_rotated_frame.u + y_size / 4;
+            i420_rotated_frame.v = i420_rotated_frame.u + y_size / devide4;
         }
-
-    } else {
-        if (i420_rotated_frame.width != src_height || i420_rotated_frame.height != src_width) {
+    } else {		//270, this
+        if (i420_rotated_frame.width != src_height || i420_rotated_frame.height != src_width) {	//frame.w = h (be 1/2), frame.h = w (no change)
             free(i420_rotated_frame.data);
-            i420_rotated_frame.width = src_height;
-            i420_rotated_frame.height = src_width;
-            i420_rotated_frame.data = (uint8_t *) malloc(y_size * 3 / 2);
+            i420_rotated_frame.width = src_height;		//be 1/2 in u and v
+            i420_rotated_frame.height = src_width;		//no change
+            i420_rotated_frame.data = (uint8_t *) malloc(y_size * time1_5);	// !!! chang to *2 at least.
             i420_rotated_frame.y = i420_rotated_frame.data;
             i420_rotated_frame.u = i420_rotated_frame.y + y_size;
-            i420_rotated_frame.v = i420_rotated_frame.u + y_size / 4;
+            i420_rotated_frame.v = i420_rotated_frame.u + y_size / devide4;	// !!! chang to /2
         }
     }
 
     jint ret = ConvertToI420((uint8_t *) nv21_frame, y_size,
                              i420_rotated_frame.y, i420_rotated_frame.width,
-                             i420_rotated_frame.u, i420_rotated_frame.width / 2,
-                             i420_rotated_frame.v, i420_rotated_frame.width / 2,
+                             i420_rotated_frame.u, i420_rotated_frame.width / 2,	// ??? not sure
+                             i420_rotated_frame.v, i420_rotated_frame.width / 2,	// ??? not sure
                              0, 0,
                              src_width, src_height,
-                             src_width, src_height,
+                             src_width, src_height,// ??? should be changed
                              (RotationMode) rotate_degree, FOURCC_NV21);
-
-
     if (ret < 0) {
         LIBENC_LOGE("ConvertToI420 failure");
         return false;
     }
 
     ret = I420Scale(i420_rotated_frame.y, i420_rotated_frame.width,
-                    i420_rotated_frame.u, i420_rotated_frame.width / 2,
-                    i420_rotated_frame.v, i420_rotated_frame.width / 2,
+                    i420_rotated_frame.u, i420_rotated_frame.width / 2,		//src_v, 240
+                    i420_rotated_frame.v, i420_rotated_frame.width / 2,		//src_u, 240
                     need_flip ? -i420_rotated_frame.width : i420_rotated_frame.width, i420_rotated_frame.height,
                     i420_scaled_frame.y, i420_scaled_frame.width,
                     i420_scaled_frame.u, i420_scaled_frame.width / 2,
@@ -126,22 +126,22 @@ static void libenc_setOutputResolution(JNIEnv* env, jobject thiz, jint out_width
 
     if (i420_scaled_frame.width != out_width || i420_scaled_frame.height != out_height) {
         free(i420_scaled_frame.data);
-        i420_scaled_frame.width = out_width;
-        i420_scaled_frame.height = out_height;
-        i420_scaled_frame.data = (uint8_t *) malloc(y_size * 3 / 2);
+        i420_scaled_frame.width = out_width;				//384
+        i420_scaled_frame.height = out_height;			//640
+        i420_scaled_frame.data = (uint8_t *) malloc(y_size * time1_5);	//!!!Ҫ��
         i420_scaled_frame.y = i420_scaled_frame.data;
         i420_scaled_frame.u = i420_scaled_frame.y + y_size;
-        i420_scaled_frame.v = i420_scaled_frame.u + y_size / 4;
+        i420_scaled_frame.v = i420_scaled_frame.u + y_size / devide4;	//!!!Ҫ��
     }
 
     if (nv12_frame.width != out_width || nv12_frame.height != out_height) {
         free(nv12_frame.data);
         nv12_frame.width = out_width;
         nv12_frame.height = out_height;
-        nv12_frame.data = (uint8_t *) malloc(y_size * 3 / 2);
+        nv12_frame.data = (uint8_t *) malloc(y_size * time1_5);
         nv12_frame.y = nv12_frame.data;
         nv12_frame.u = nv12_frame.y + y_size;
-        nv12_frame.v = nv12_frame.u + y_size / 4;
+        nv12_frame.v = nv12_frame.u + y_size / devide4;
     }
 
     x264_ctx.width = out_width;
@@ -158,8 +158,8 @@ static jbyteArray libenc_NV21ToI420(JNIEnv* env, jobject thiz, jbyteArray frame,
     }
 
     int y_size = i420_scaled_frame.width * i420_scaled_frame.height;
-    jbyteArray i420Frame = env->NewByteArray(y_size * 3 / 2);
-    env->SetByteArrayRegion(i420Frame, 0, y_size * 3 / 2, (jbyte *) i420_scaled_frame.data);
+    jbyteArray i420Frame = env->NewByteArray(y_size * time1_5);
+    env->SetByteArrayRegion(i420Frame, 0, y_size * time1_5, (jbyte *) i420_scaled_frame.data);
 
     env->ReleaseByteArrayElements(frame, nv21_frame, JNI_ABORT);
     return i420Frame;
@@ -167,18 +167,18 @@ static jbyteArray libenc_NV21ToI420(JNIEnv* env, jobject thiz, jbyteArray frame,
 
 // For COLOR_FormatYUV420SemiPlanar
 static jbyteArray libenc_NV21ToNV12(JNIEnv* env, jobject thiz, jbyteArray frame, jint src_width,
-                                    jint src_height, jboolean need_flip, jint rotate_degree) {
+                                    jint src_height, jboolean need_flip, jint rotate_degree) {		//rotate 270
     jbyte* nv21_frame = env->GetByteArrayElements(frame, NULL);
 
-    if (!nv21_to_i420(nv21_frame, src_width, src_height, need_flip, rotate_degree)) {
+    if (!nv21_to_i420(nv21_frame, src_width, src_height, need_flip, rotate_degree)) {	//global 640*480 270
         return NULL;
     }
 
-    int ret = ConvertFromI420(i420_scaled_frame.y, i420_scaled_frame.width,
-                              i420_scaled_frame.u, i420_scaled_frame.width / 2,
+    int ret = ConvertFromI420(i420_scaled_frame.y, i420_scaled_frame.width,		//384
+                              i420_scaled_frame.u, i420_scaled_frame.width / 2,			//192
                               i420_scaled_frame.v, i420_scaled_frame.width / 2,
-                              nv12_frame.data, nv12_frame.width,
-                              nv12_frame.width, nv12_frame.height,
+                              nv12_frame.data, nv12_frame.width,						//
+                              nv12_frame.width, nv12_frame.height,						//480*640
                               FOURCC_NV12);
     if (ret < 0) {
         LIBENC_LOGE("ConvertFromI420 failure");
@@ -186,8 +186,8 @@ static jbyteArray libenc_NV21ToNV12(JNIEnv* env, jobject thiz, jbyteArray frame,
     }
 
     int y_size = nv12_frame.width * nv12_frame.height;
-    jbyteArray nv12Frame = env->NewByteArray(y_size * 3 / 2);
-    env->SetByteArrayRegion(nv12Frame, 0, y_size * 3 / 2, (jbyte *) nv12_frame.data);
+    jbyteArray nv12Frame = env->NewByteArray(y_size * time1_5);
+    env->SetByteArrayRegion(nv12Frame, 0, y_size * time1_5, (jbyte *) nv12_frame.data);
 
     env->ReleaseByteArrayElements(frame, nv21_frame, JNI_ABORT);
     return nv12Frame;

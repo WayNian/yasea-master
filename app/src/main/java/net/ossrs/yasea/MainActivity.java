@@ -51,7 +51,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
     private long lastTimeMillis;
     private int mPreviewRotation = 90;
     private int mCamId = Camera.getNumberOfCameras() - 1; // default camera
-    private byte[] mYuvFrameBuffer = new byte[SrsEncoder.VPREV_WIDTH * SrsEncoder.VPREV_HEIGHT * 3 / 2];
+    private byte[] mYuvFrameBuffer = new byte[SrsEncoder.VPREV_WIDTH * SrsEncoder.VPREV_HEIGHT * 3/2];
 
     private String mNotifyMsg;
     private SharedPreferences sp;
@@ -397,10 +397,10 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
         //params.set("orientation", "portrait");
         //params.set("orientation", "landscape");
 //        params.setRotation(90);
-        params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
-        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
+//        params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
+//        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
         //500,290对应的是摄像头一，501是摄像头二
-//        params.setPreviewSize(640, 480);
+        params.setPreviewSize(640, 384);
         int[] range = findClosestFpsRange(SrsEncoder.VFPS, params.getSupportedPreviewFpsRange());
         params.setPreviewFpsRange(range[0], range[1]);
         params.setPreviewFormat(SrsEncoder.VFORMAT);
@@ -453,6 +453,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
     public void onPreviewFrame(byte[] data, Camera c) {
         onGetYuvFrame(data);
         c.addCallbackBuffer(mYuvFrameBuffer);
+        int d = data.length;
+        Log.e(TAG, String.valueOf(d));
     }
 
     private void onGetPcmFrame(byte[] pcmBuffer, int size) {

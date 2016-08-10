@@ -20,8 +20,8 @@ public class SrsEncoder {
 
     public static final String VCODEC = "video/avc";
     public static final String ACODEC = "audio/mp4a-latm";
-    public static final int VPREV_WIDTH = 1280;
-    public static final int VPREV_HEIGHT = 720;
+    public static final int VPREV_WIDTH = 640;
+    public static final int VPREV_HEIGHT = 768;
     public static final int VOUT_WIDTH = 384;
     public static final int VOUT_HEIGHT = 640;
     public static int vOutWidth = VOUT_WIDTH;   // Note: the stride of resolution must be set as 16x for hard encoding with some chip like MTK
@@ -219,6 +219,7 @@ public class SrsEncoder {
         if (inBufferIndex >= 0) {
             ByteBuffer bb = inBuffers[inBufferIndex];
             bb.clear();
+            int a = yuvFrame.length;
             bb.put(yuvFrame, 0, yuvFrame.length);
             vencoder.queueInputBuffer(inBufferIndex, 0, yuvFrame.length, pts, 0);
         }
@@ -264,11 +265,13 @@ public class SrsEncoder {
             long pts = System.nanoTime() / 1000 - mPresentTimeUs;
             if (useSoftEncoder) {
                 if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                    swPortraitYuvFrame(data, pts);
+//                    swPortraitYuvFrame(data, pts);
                 } else {
-                    swLandscapeYuvFrame(data, pts);
+//                    swLandscapeYuvFrame(data, pts);
                 }
             } else {
+                int l = data.length;
+//                byte[] processedData = data;
                 byte[] processedData = mOrientation == Configuration.ORIENTATION_PORTRAIT ?
                         hwPortraitYuvFrame(data) : hwLandscapeYuvFrame(data);
                 if (processedData != null) {
