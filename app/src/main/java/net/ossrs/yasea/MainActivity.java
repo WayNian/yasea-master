@@ -34,7 +34,6 @@ import net.ossrs.yasea.rtmp.RtmpPublisher;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback {
     private static final String TAG = "Yasea";
-
     Button btnPublish = null;
     Button btnSwitchCamera = null;
     Button btnRecord = null;
@@ -55,7 +54,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
 
     private String mNotifyMsg;
     private SharedPreferences sp;
-    private String rtmpUrl = "rtmp://115.159.206.57/live/tt";
+//    private String rtmpUrl = "rtmp://115.159.206.57/live/tt";
+    private String rtmpUrl = "rtmp://p68825923.live.126.net/live/32b27ff13c094b3a9088e64fa6508961?wsSecret=09c8bb49323b000802efc3564b51b568&wsTime=1471592956";
     private String recPath = Environment.getExternalStorageDirectory().getPath() + "/test.mp4";
 
     //创建一个SrsFlvMuxer对象
@@ -400,7 +400,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Ca
 //        params.setPictureSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
 //        params.setPreviewSize(SrsEncoder.VPREV_WIDTH, SrsEncoder.VPREV_HEIGHT);
         //500,290对应的是摄像头一，501是摄像头二
-        params.setPreviewSize(640, 384);
+        params.setPreviewSize(720, 576);
         int[] range = findClosestFpsRange(SrsEncoder.VFPS, params.getSupportedPreviewFpsRange());
         params.setPreviewFpsRange(range[0], range[1]);
         params.setPreviewFormat(SrsEncoder.VFORMAT);

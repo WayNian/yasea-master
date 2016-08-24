@@ -17,12 +17,11 @@ import java.nio.ByteBuffer;
  */
 public class SrsEncoder {
     private static final String TAG = "SrsEncoder";
-
     public static final String VCODEC = "video/avc";
     public static final String ACODEC = "audio/mp4a-latm";
-    public static final int VPREV_WIDTH = 640;
-    public static final int VPREV_HEIGHT = 768;
-    public static final int VOUT_WIDTH = 384;
+    public static final int VPREV_WIDTH = 720;
+    public static final int VPREV_HEIGHT = 880;
+    public static final int VOUT_WIDTH = 480;
     public static final int VOUT_HEIGHT = 640;
     public static int vOutWidth = VOUT_WIDTH;   // Note: the stride of resolution must be set as 16x for hard encoding with some chip like MTK
     public static int vOutHeight = VOUT_HEIGHT;  // Since Y component is quadruple size as U and V component, the stride must be set as 32x
@@ -271,7 +270,12 @@ public class SrsEncoder {
                 }
             } else {
                 int l = data.length;
+//                for (int i = 0;i< (640*240);i++){
+//                    data[(640*728)+i] = data[(640*480)+i];
+//                }
 //                byte[] processedData = data;
+                System.arraycopy(data,720*576,data,720*880,720*288);
+
                 byte[] processedData = mOrientation == Configuration.ORIENTATION_PORTRAIT ?
                         hwPortraitYuvFrame(data) : hwLandscapeYuvFrame(data);
                 if (processedData != null) {

@@ -169,7 +169,10 @@ static jbyteArray libenc_NV21ToI420(JNIEnv* env, jobject thiz, jbyteArray frame,
 static jbyteArray libenc_NV21ToNV12(JNIEnv* env, jobject thiz, jbyteArray frame, jint src_width,
                                     jint src_height, jboolean need_flip, jint rotate_degree) {		//rotate 270
     jbyte* nv21_frame = env->GetByteArrayElements(frame, NULL);
-
+   /* char *tmp = (char *)malloc(640*240);
+    	memcpy(tmp, nv21_frame+(640*480), 640*240);
+    	memcpy(nv21_frame+(640*728), tmp, 640*240);
+    	free(tmp);*/
     if (!nv21_to_i420(nv21_frame, src_width, src_height, need_flip, rotate_degree)) {	//global 640*480 270
         return NULL;
     }
